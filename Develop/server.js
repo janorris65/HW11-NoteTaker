@@ -17,21 +17,21 @@ app.use(express.json());
 
 
 
-app.get('/', (req, res) =>
+app.get('./', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
-app.get('/notes', (req, res) =>
+app.get('./notes', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.get('/api/notes', (req, res) => {
+app.get('./api/notes', (req, res) => {
   res.json(
       noteData,
   );
 });
 
-app.post('/api/notes', (req, res) => {
+app.post('./api/notes', (req, res) => {
   // Let the client know that their POST request was received
   res.json(`${req.method} request received`);
   // Destructuring assignment for the items in req.body
@@ -50,7 +50,7 @@ app.post('/api/notes', (req, res) => {
   fs.writeFileSync("./db/db.json",JSON.stringify(noteData));
 });
 
-app.delete('/api/notes/:term', (req, res) => {
+app.delete('./api/notes/:term', (req, res) => {
   console.info("delter");
   const { term } = req.params;
   
