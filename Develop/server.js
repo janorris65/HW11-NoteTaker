@@ -9,6 +9,12 @@ const uuid = require('./uuid')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(express.json());
+
+
+
+
+
+
 app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/index.html'))
 );
@@ -42,6 +48,33 @@ app.post('/api/notes', (req, res) => {
   fs.writeFileSync("./db/db.json",JSON.stringify(noteData));
 });
 
+app.delete('/api/notes/:term', (req, res) => {
+  console.info("delter");
+  const { term } = req.params;
+  
+  const requestedTerm = noteData.filter(
+    (t) => t.id !== term
+  );
+
+  function writeDeleteFile(requestedTerm) {
+    return new Promise(resolve => {
+      fs.writeFile("./db/db.json",JSON.stringify(requestedTerm),()=>resolve(console.log("Success")));
+    });
+  }
+  
+  async function asyncCall(arg) {
+    console.log('calling');
+    await writeDeleteFile(arg); 
+  };
+
+  asyncCall(requestedTerm);
+  console.log("done")
+  res.send(`Got a DELETE request at ${term}`)
+})
+
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
+
+
+
