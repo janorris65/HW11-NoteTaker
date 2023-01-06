@@ -1,7 +1,9 @@
 const fs = require('fs');
+const fsPromises = require('fs').promises;
+
 const express = require('express');
 
-const PORT = 3001;
+let PORT = process.env.PORT || 3001;
 const app = express();
 const path = require('path');
 const noteData = require ("./db/db.json");
@@ -55,26 +57,41 @@ app.delete('/api/notes/:term', (req, res) => {
   const requestedTerm = noteData.filter(
     (t) => t.id !== term
   );
-
-  function writeDeleteFile(requestedTerm) {
-    return new Promise(resolve => {
-      fs.writeFile("./db/db.json",JSON.stringify(requestedTerm),()=>resolve(console.log("Success")));
-    });
-  }
+  (async function main() {
+    try {
+        await fsPromises.writeFile("./db/db.json",JSON.stringify(requestedTerm)
+                )
   
-  async function asyncCall(arg) {
-    console.log('calling');
-    await writeDeleteFile(arg); 
-  };
+        console.log("File written successfully");
+        console.log("The written file has"
+            + " the following contents:");
+            console.log("" + 
+            fs.readFileSync("./db/db.json"));
+const updatedresponse = fs.readFileSync("./db/db.json");
+            res.send(`Got a DELETE request at ${term}`)
 
-  asyncCall(requestedTerm);
-  console.log("done")
-  res.send(`Got a DELETE request at ${term}`)
+    } catch (err) {
+        console.error(err);
+    }
+  })();
+  
+
+ // writeDeleteFile(requestedTerm).then(()=>res.send(`Got a DELETE request at ${term}`));
+ console.log("done")
+  
 })
 
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
 
+/*function writeDeleteFile(requestedTerm) {
+    fsPromises.writeFile("./db/db.json",JSON.stringify(requestedTerm),console.log("Success"));
+  };*/
 
+
+/*async function asyncCall(arg) {
+  console.log('calling');
+  await writeDeleteFile(arg); 
+};*/
 
